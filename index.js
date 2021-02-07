@@ -3,9 +3,9 @@ const name = "Message Click Actions";
 let settings = {
 	deleteClick: true,
 	doubleClickEdit: true,
-	controlClickReply: true
+	controlClickReply: true,
+	keepDiscordBehavior: true
 };
-
 
 let keysDown = {
 	Delete: false,
@@ -59,7 +59,8 @@ export default {
 			unpatch = goosemodScope.patcher.patch(messageModule, "default", (args) => {
 				let orig = args[0].onClick;
 				args[0].onClick = function() {
-					if (onClick(args[0])) orig.apply(this, arguments);
+					if (onClick(args[0]) && settings.keepDiscordBehavior)
+						orig.apply(this, arguments);
 				};
 
 				args[0].onDoubleClick = () => onDoubleClick(args[0]);
@@ -92,6 +93,12 @@ export default {
 					text: "Delete + Click to delete",
 					onToggle: (value) => settings.deleteClick = value,
 					isToggled: () => settings.deleteClick,
+				},
+				{
+					type: "toggle",
+					text: "Keep Default Discord Behavior (Alt+Click to mark unread)",
+					onToggle: (value) => settings.keepDiscordBehavior = value,
+					isToggled: () => settings.keepDiscordBehavior,
 				}
 			]);
 		},
