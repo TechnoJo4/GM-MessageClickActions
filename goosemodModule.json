@@ -1,0 +1,10 @@
+{
+  "main": "index.js",
+  "version": "1.0.0",
+
+  "name": "Message Click Actions",
+  "description": "Quick keyboard+click shortcuts for common message actions.",
+  "tags": ["quick-actions"],
+  "authors": ["169175121037099008"],
+  "images": []
+}
