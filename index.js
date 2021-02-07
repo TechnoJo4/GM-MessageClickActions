@@ -110,7 +110,7 @@ export default {
 
 			document.removeEventListener("keydown", keyDownListener);
 			document.removeEventListener("keyup", keyUpListener);
-		}
+		},
 
 		getSettings: () => [settings],
 		loadSettings: ([_settings]) => { settings = _settings; }
