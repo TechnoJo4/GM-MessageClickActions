@@ -1,6 +1,6 @@
 {
   "main": "index.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
 
   "name": "Message Click Actions",
   "description": "Quick keyboard+click shortcuts for common message actions.",
