@@ -9,6 +9,8 @@ let moduleSettings = {
     doubleClickEdit: true,
     controlClickReply: true,
     keepDiscordBehavior: true,
+    editOnlyOwnMessages: false,
+    editClearContent: false,
 };
 
 const keysDown = {
@@ -29,15 +31,18 @@ export default {
             const { startEditMessage, deleteMessage } = webpackModules.findByProps("startEditMessage");
             const { getChannel } = webpackModules.findByProps("getChannel");
             const { replyToMessage } = webpackModules.findByProps("replyToMessage");
+            const { getCurrentUser } = webpackModules.findByProps("getCurrentUser");
 
             function doubleClickHandler(props) {
                 if (moduleSettings.doubleClickEdit) {
                     const msg = props.message;
-                    startEditMessage(
-                        msg.channel_id,
-                        msg.id,
-                        msg.content || ""
-                    );
+                    if (!moduleSettings.editOnlyOwnMessages || (msg.author.id === getCurrentUser().id)) {
+                        startEditMessage(
+                            msg.channel_id,
+                            msg.id,
+                            moduleSettings.editClearContent ? "" : (msg.content || "")
+                        );
+                    }
                 }
             }
 
@@ -58,7 +63,8 @@ export default {
             const Message = webpackModules.find(
                 (m) =>
                     m.default &&
-                    typeof m.default === "function" && m.default.toString().includes('"className","compact","zalgo",')
+                    typeof m.default === "function" &&
+                    (m.__powercordOriginal_default ||  m.default).toString().includes("childrenRepliedMessage")
             );
             unpatch = patcher.patch(
                 Message,
@@ -106,10 +112,21 @@ export default {
                 },
                 {
                     type: "toggle",
-                    text:
-                        "Keep Default Discord Behavior (Alt+Click to mark unread)",
+                    text: "Keep Default Discord Behavior (Alt+Click to mark unread)",
                     onToggle: (value) => (moduleSettings.keepDiscordBehavior = value),
                     isToggled: () => moduleSettings.keepDiscordBehavior,
+                },
+                {
+                    type: "toggle",
+                    text: "Edit only your own messages",
+                    onToggle: (value) => (moduleSettings.editOnlyOwnMessages = value),
+                    isToggled: () => moduleSettings.editOnlyOwnMessages,
+                },
+                {
+                    type: "toggle",
+                    text: "Clear content when editing",
+                    onToggle: (value) => (moduleSettings.editClearContent = value),
+                    isToggled: () => moduleSettings.editClearContent,
                 },
             ]);
         },
